@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>可持续创新赛评审中台 | 校园环保项目交互数据工作台</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-bar">
+        <div class="product-lockup">
+          <div class="product-mark" aria-hidden="true">碳</div>
+          <div>
+            <p class="eyebrow">Google 生态 Material You workspace</p>
+            <h1>可持续创新赛评审中台</h1>
+          </div>
+        </div>
+        <div class="top-actions" aria-label="页面操作">
+          <button class="text-button" type="button" id="fillSampleButton">补全样例数据</button>
+          <button class="primary-button" type="button" id="exportMarkdownButton">导出 Markdown</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="workspace-rail" aria-label="交互工作流">
+          <button class="rail-step is-active" type="button" data-target="module-input">
+            <span>1</span>
+            <strong>项目输入</strong>
+          </button>
+          <button class="rail-step" type="button" data-target="module-data">
+            <span>2</span>
+            <strong>数据补全</strong>
+          </button>
+          <button class="rail-step" type="button" data-target="module-diagnosis">
+            <span>3</span>
+            <strong>空间诊断</strong>
+          </button>
+          <button class="rail-step" type="button" data-target="module-plans">
+            <span>4</span>
+            <strong>三案比选</strong>
+          </button>
+          <button class="rail-step" type="button" data-target="module-cost">
+            <span>5</span>
+            <strong>工程造价</strong>
+          </button>
+          <button class="rail-step" type="button" data-target="module-investment">
+            <span>6</span>
+            <strong>投资测算</strong>
+          </button>
+          <button class="rail-step" type="button" data-target="module-visual">
+            <span>7</span>
+            <strong>视觉方案</strong>
+          </button>
+          <button class="rail-step" type="button" data-target="module-report">
+            <span>8</span>
+            <strong>报告输出</strong>
+          </button>
+        </aside>
+
+        <section class="workspace-stage" aria-label="主工作区">
+          <section class="hero-surface">
+            <div class="hero-copy">
+              <p class="eyebrow">校园可持续创新赛样例</p>
+              <h2>从环保创意到投前判断的交互数据中台</h2>
+              <p>把项目录入、数据补全、空间诊断、三案比选、工程造价、投资测算、视觉推演和报告输出放进一个可操作的评审工作台，帮助评委和投资方快速判断落地价值。</p>
+            </div>
+            <div class="assistant-card" aria-label="下一步建议">
+              <span class="spark" aria-hidden="true"></span>
+              <strong id="assistantTitle">下一步建议</strong>
+              <p id="assistantText">先调整项目输入，系统会同步刷新减碳影响、资金测算和报告摘要。</p>
+            </div>
+          </section>
+
+          <section class="summary-strip" aria-label="核心结果" id="summaryMetrics"></section>
+
+          <div class="workspace-grid">
+            <section class="surface-card input-card" id="module-input" aria-labelledby="input-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">01 Input</p>
+                  <h3 id="input-title">项目输入</h3>
+                </div>
+                <span class="status-chip">样例案例</span>
+              </div>
+              <form class="project-form" id="projectForm">
+                <label>
+                  <span>项目名称</span>
+                  <input type="text" id="districtInput" value="绿洲循环校园行动">
+                </label>
+                <label>
+                  <span>项目类型</span>
+                  <select id="buildingTypeInput">
+                    <option>校园低碳改造</option>
+                    <option>循环回收平台</option>
+                    <option>绿色能源管理</option>
+                    <option>环保教育工具</option>
+                  </select>
+                </label>
+                <label>
+                  <span>覆盖人数（人）</span>
+                  <input type="number" id="areaInput" min="300" max="20000" step="100" value="4200">
+                </label>
+                <label>
+                  <span>减碳潜力（%）</span>
+                  <input type="range" id="vacancyInput" min="0" max="100" value="62">
+                </label>
+                <label>
+                  <span>项目成熟度</span>
+                  <select id="heritageInput">
+                    <option>原型验证期</option>
+                    <option>校园试点期</option>
+                    <option>规模化复制期</option>
+                    <option>产业化准备期</option>
+                  </select>
+                </label>
+                <label>
+                  <span>预算上限（万元）</span>
+                  <input type="number" id="budgetInput" min="50" max="5000" step="50" value="860">
+                </label>
+                <label>
+                  <span>目标验证周期（年）</span>
+                  <input type="number" id="paybackInput" min="0.5" max="10" step="0.5" value="3">
+                </label>
+                <label>
+                  <span>核心受众</span>
+                  <select id="audienceInput">
+                    <option>评委 / 投资方</option>
+                    <option>高校管理者</option>
+                    <option>师生共创团队</option>
+                    <option>产业合作方</option>
+                  </select>
+                </label>
+              </form>
+            </section>
+
+            <section class="surface-card canvas-card" aria-label="空间交互总览">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Impact Interaction</p>
+                  <h3>空间诊断总览</h3>
+                </div>
+                <span id="refreshStamp">更新于 2026-06-11</span>
+              </div>
+              <div class="site-workbench" role="img" aria-label="校园可持续项目影响画布">
+                <div class="street-path main-path"></div>
+                <div class="street-path night-path"></div>
+                <div class="courtyard-zone core-zone">
+                  <strong>校园示范场景</strong>
+                  <span>节能 + 回收 + 运营</span>
+                </div>
+                <button class="space-node node-entry" type="button">评审路演</button>
+                <button class="space-node node-night" type="button">碳数据</button>
+                <button class="space-node node-retail" type="button">师生触点</button>
+                <button class="space-node node-service" type="button">企业转化</button>
+              </div>
+              <div class="decision-cues">
+                <article>
+                  <span>项目阶段</span>
+                  <strong>校园试点 / 可复制验证</strong>
+                </article>
+                <article>
+                  <span>主要矛盾</span>
+                  <strong>减碳可信度与商业化路径需要对齐</strong>
+                </article>
+                <article>
+                  <span>建议方向</span>
+                  <strong>数据核证 + 校园场景 + 投资转化</strong>
+                </article>
+              </div>
+            </section>
+
+            <section class="surface-card" id="module-data" aria-labelledby="data-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">02 Data</p>
+                  <h3 id="data-title">数据补全</h3>
+                </div>
+                <button class="icon-button" type="button" id="refreshDataButton" aria-label="刷新样例数据">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 6v5h-5"></path>
+                    <path d="M4 18v-5h5"></path>
+                    <path d="M18.2 9A7 7 0 0 0 6.8 6.4L4 9"></path>
+                    <path d="M5.8 15A7 7 0 0 0 17.2 17.6L20 15"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="source-grid" id="dataSources"></div>
+            </section>
+          </div>
+
+          <section class="surface-card" id="module-diagnosis" aria-labelledby="diagnosis-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">03 Diagnosis</p>
+                <h3 id="diagnosis-title">空间诊断</h3>
+              </div>
+              <span class="status-chip warn">谨慎投资</span>
+            </div>
+            <div class="diagnosis-board" id="diagnosisList"></div>
+            <div class="assistant-note">建议优先核证减碳数据、明确校园运营责任边界，并把可持续影响力转译为评委和投资方能快速理解的资金化指标。</div>
+          </section>
+
+          <section class="surface-card" id="module-plans" aria-labelledby="plans-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">04 Scenarios</p>
+                <h3 id="plans-title">三案比选</h3>
+              </div>
+              <span class="status-chip">规则生成 · 非真实 AI</span>
+            </div>
+            <div class="plan-grid" id="planCards"></div>
+          </section>
+
+          <div class="split-grid">
+            <section class="surface-card" id="module-cost" aria-labelledby="cost-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">05 Cost</p>
+                  <h3 id="cost-title">工程造价</h3>
+                </div>
+                <span id="costRangeBadge" class="status-chip"></span>
+              </div>
+              <div class="cost-table-wrap">
+                <table class="cost-table">
+                  <thead>
+                    <tr>
+                      <th>类别</th>
+                      <th>数量 / 覆盖</th>
+                      <th>单价区间</th>
+                      <th>小计</th>
+                      <th>降本策略</th>
+                    </tr>
+                  </thead>
+                  <tbody id="costRows"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="surface-card" id="module-investment" aria-labelledby="investment-title">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">06 Investment</p>
+                  <h3 id="investment-title">投资测算</h3>
+                </div>
+                <span class="status-chip good" id="paybackBadge"></span>
+              </div>
+              <div class="investment-grid" id="investmentMetrics"></div>
+              <div class="mix-chart" id="revenueMix"></div>
+              <div class="risk-stack" id="riskList"></div>
+            </section>
+          </div>
+
+          <section class="surface-card" id="module-visual" aria-labelledby="visual-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">07 Visual Studio</p>
+                <h3 id="visual-title">视觉方案</h3>
+              </div>
+              <span class="status-chip warn">概念级投前沟通材料</span>
+            </div>
+            <div class="visual-studio">
+              <div class="visual-canvas" id="visualCanvas" aria-label="交互式概念视觉画布">
+                <div class="visual-sky"></div>
+                <div class="visual-building back-building"></div>
+                <div class="visual-building front-building"></div>
+                <div class="visual-yard"></div>
+                <div class="visual-flow flow-primary"></div>
+                <div class="visual-flow flow-secondary"></div>
+                <div class="visual-chip chip-one">节能改造</div>
+                <div class="visual-chip chip-two">碳账本</div>
+                <div class="visual-chip chip-three">校园回收</div>
+              </div>
+              <aside class="visual-control-panel">
+                <div class="segmented-control" id="visualModeButtons" aria-label="视觉模式">
+                  <button class="is-active" type="button" data-visual-mode="day">日间动线</button>
+                  <button type="button" data-visual-mode="night">夜间运营</button>
+                  <button type="button" data-visual-mode="material">材料策略</button>
+                </div>
+                <div class="material-swatches" id="materialSwatches"></div>
+                <div class="prompt-panel">
+                  <h4>标准化视觉提示词</h4>
+                  <p id="visualPrompt"></p>
+                  <h4>视频分镜脚本</h4>
+                  <ol id="storyboardList"></ol>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="surface-card" id="module-report" aria-labelledby="report-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">08 Report</p>
+                <h3 id="report-title">报告输出</h3>
+              </div>
+              <div class="report-actions">
+                <button class="text-button" type="button" id="copyReportButton">复制摘要</button>
+                <button class="primary-button" type="button" id="exportHtmlButton">导出 HTML</button>
+              </div>
+            </div>
+            <div class="report-preview" id="reportPreview"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
