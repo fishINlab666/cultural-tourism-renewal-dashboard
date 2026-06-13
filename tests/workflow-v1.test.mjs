@@ -146,3 +146,22 @@ test('V2 loads local chart and map libraries without embedding a Mapbox token', 
   assert.match(html, /window\.APP_CONFIG/);
   assert.doesNotMatch(html, /pk\.[A-Za-z0-9._-]{20,}/);
 });
+
+test('V2 investment step exposes the three-slider sandbox and KPI donut layout', async () => {
+  const html = await read('index.html');
+  const css = await read('styles.css');
+
+  assert.match(html, /id="investmentSandbox"/);
+  assert.match(html, /id="sandboxBudget"[^>]*type="range"[^>]*min="300"[^>]*max="1000"[^>]*step="10"/);
+  assert.match(html, /id="sandboxTicketPrice"[^>]*type="range"[^>]*min="40"[^>]*max="120"[^>]*step="5"/);
+  assert.match(html, /id="sandboxVacancy"[^>]*type="range"[^>]*min="10"[^>]*max="60"[^>]*step="1"/);
+
+  for (const id of ['totalInvestmentKpi', 'annualNetCashFlowKpi', 'paybackKpi', 'roi5Kpi', 'revenueMix', 'revenueLegend']) {
+    assert.match(html, new RegExp(`id="${id}"`), `${id} should exist on the investment step`);
+  }
+
+  assert.match(html, /演示试算，不构成投资承诺/);
+  assert.match(css, /\.investment-sandbox-layout\s*\{[^}]*grid-template-columns:\s*minmax\(280px,\s*\.72fr\)\s+minmax\(0,\s*1\.28fr\)/s);
+  assert.match(css, /\.investment-kpi-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s);
+  assert.match(css, /@media \(max-width: 760px\)[\s\S]*\.investment-sandbox-layout\s*\{[^}]*grid-template-columns:\s*1fr/);
+});

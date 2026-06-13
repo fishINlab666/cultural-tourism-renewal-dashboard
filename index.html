@@ -184,11 +184,51 @@
           </section>
 
           <section class="step-panel" data-step-panel="5" aria-labelledby="stepTitle" hidden>
-            <div class="metric-grid" id="investmentSummary"></div>
-            <div class="section-grid equal">
-              <article class="primary-card"><div class="card-heading"><div><h2>收入结构参考</h2><p>基于集团运营指标库的脱敏区间。</p></div></div><div class="bar-chart" id="revenueMix"></div></article>
-              <article class="primary-card"><div class="card-heading"><div><h2>主要风险与动作</h2><p>风险不会只用颜色表达，并给出处理建议。</p></div></div><div class="risk-list" id="riskList"></div></article>
+            <div class="investment-sandbox-layout" id="investmentSandbox">
+              <aside class="investment-controls-card">
+                <div class="card-heading">
+                  <div><p class="eyebrow">独立试算参数</p><h2>拖动滑杆查看结果变化</h2><p>参数仅用于本页试算，不会修改已确认的客户项目资料。</p></div>
+                </div>
+
+                <label class="range-control" for="sandboxBudget">
+                  <span class="range-heading"><strong>预算上限</strong><output id="sandboxBudgetValue" for="sandboxBudget">860 万</output></span>
+                  <input id="sandboxBudget" type="range" name="budget" min="300" max="1000" step="10" value="860">
+                  <span class="range-scale"><small>300 万</small><small>1000 万</small></span>
+                </label>
+
+                <label class="range-control" for="sandboxTicketPrice">
+                  <span class="range-heading"><strong>客单价</strong><output id="sandboxTicketPriceValue" for="sandboxTicketPrice">80 元</output></span>
+                  <input id="sandboxTicketPrice" type="range" name="ticketPrice" min="40" max="120" step="5" value="80">
+                  <span class="range-scale"><small>40 元</small><small>120 元</small></span>
+                </label>
+
+                <label class="range-control" for="sandboxVacancy">
+                  <span class="range-heading"><strong>空置率</strong><output id="sandboxVacancyValue" for="sandboxVacancy">40%</output></span>
+                  <input id="sandboxVacancy" type="range" name="vacancy" min="10" max="60" step="1" value="40">
+                  <span class="range-scale"><small>10%</small><small>60%</small></span>
+                </label>
+
+                <div class="sandbox-disclaimer"><strong>演示试算，不构成投资承诺</strong><span>采用简化线性公式，用于快速比较参数变化方向；正式决策仍需财务、工程与运营团队复核。</span></div>
+              </aside>
+
+              <section class="investment-results" aria-label="投资试算结果">
+                <div class="investment-kpi-grid" id="investmentSummary">
+                  <article class="investment-kpi-card"><span>总投资</span><strong id="totalInvestmentKpi" aria-live="polite">774 万</strong><small>预算规模与空置维护修正</small></article>
+                  <article class="investment-kpi-card"><span>年净现金流</span><strong id="annualNetCashFlowKpi" aria-live="polite">321 万</strong><small>收入扣除年度运营成本</small></article>
+                  <article class="investment-kpi-card"><span>回本周期</span><strong id="paybackKpi" aria-live="polite">2.4 年</strong><small>总投资 ÷ 年净现金流</small></article>
+                  <article class="investment-kpi-card"><span>5 年 ROI</span><strong id="roi5Kpi" aria-live="polite">107%</strong><small>五年累计净现金回报</small></article>
+                </div>
+
+                <article class="revenue-donut-card">
+                  <div class="card-heading split-heading"><div><h2>收入结构</h2><p>客单价与有效经营率变化会调整收入构成。</p></div><span class="status-pill is-good">实时联动</span></div>
+                  <div class="revenue-donut-layout">
+                    <div class="revenue-donut" id="revenueMix" role="img" aria-label="门票体验、空间经营、活动研学和文创商业收入结构环形图"></div>
+                    <div class="revenue-legend" id="revenueLegend" aria-label="收入结构图例"></div>
+                  </div>
+                </article>
+              </section>
             </div>
+            <div id="riskList" hidden></div>
           </section>
 
           <section class="step-panel" data-step-panel="6" aria-labelledby="stepTitle" hidden>
