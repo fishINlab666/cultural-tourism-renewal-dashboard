@@ -18,6 +18,7 @@ export function saveDraft(state, storage) {
     workbookIssues: [...(state.workbookIssues ?? [])],
     selectedPlanId: state.selectedPlanId,
     visualMode: state.visualMode,
+    investmentSandbox: { ...(state.investmentSandbox ?? {}) },
     analysisRun: state.analysisRun,
     analysisResult: state.analysisResult,
     project: { ...state.project },

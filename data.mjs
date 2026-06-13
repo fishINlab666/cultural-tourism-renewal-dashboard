@@ -134,6 +134,7 @@ export function createInitialState() {
     workbookIssues: [],
     selectedPlanId: null,
     visualMode: 'day',
+    investmentSandbox: { budget: 860, ticketPrice: 80, vacancy: 40 },
     analysisRun: null,
     analysisResult: null,
     project: emptyProject,
