@@ -10,6 +10,7 @@ import {
 } from './analysis.mjs';
 import { parseWorkbook } from './workbook.mjs';
 import { clearDraft, loadDraft, saveDraft } from './storage.mjs';
+import { createDiagnosticView } from './diagnostic-view.mjs';
 
 const stepDescriptions = {
   1: '先用统一模板准备项目资料，系统只会要求您处理必要字段。',
@@ -28,6 +29,7 @@ const state = restoredDraft
   ? { ...initialState, ...restoredDraft, project: { ...initialState.project, ...restoredDraft.project } }
   : initialState;
 const provider = new LocalAnalysisProvider(sampleData);
+const diagnosticView = createDiagnosticView(window);
 let toastTimer;
 
 const $ = (selector) => document.querySelector(selector);
@@ -174,6 +176,10 @@ function evidenceTags(evidence) {
 
 function renderDiagnostics() {
   const diagnostics = state.analysisResult?.diagnostics ?? [];
+  const isComplete = state.analysisRun?.status === 'completed' && Boolean(state.analysisResult?.overview);
+  $('#analysisProgress').hidden = isComplete;
+  $('#diagnosticWorkbench').hidden = !isComplete;
+  $('#diagnosticEvidence').hidden = !isComplete;
   $('#diagnosticList').innerHTML = diagnostics.map((item) => `<article class="diagnostic-card">
     <div class="diagnostic-head"><strong>${escapeHtml(item.label)}</strong><strong>${item.value}</strong></div>
     <p>${escapeHtml(item.summary)}</p>
@@ -184,6 +190,22 @@ function renderDiagnostics() {
   $('#analysisVersion').innerHTML = run
     ? `<span>集团知识库 ${escapeHtml(run.knowledgeVersion)}</span><span>规则版本 ${escapeHtml(run.ruleVersion)}</span><span>模型版本 ${escapeHtml(run.modelVersion)}</span><span>本次分析可按版本复现</span>`
     : '<span>完成数据确认后显示分析版本。</span>';
+  if (isComplete && state.currentStep === 3) {
+    window.requestAnimationFrame(() => diagnosticView.render({
+      overview: state.analysisResult.overview,
+      diagnostics,
+      elements: {
+        projectMap: $('#projectMap'),
+        mapboxCanvas: $('#mapboxCanvas'),
+        mapModeChip: $('#mapModeChip'),
+        mapPlaceName: $('#mapPlaceName'),
+        overallScore: $('#overallScore'),
+        diagnosticRadar: $('#diagnosticRadar'),
+        radarFallbackValues: $('#radarFallbackValues'),
+        diagnosticConclusions: $('#diagnosticConclusions'),
+      },
+    }));
+  }
 }
 
 function currentCostContext() {
@@ -483,6 +505,7 @@ function bindEvents() {
     clearDraft();
     window.location.reload();
   });
+  window.addEventListener('resize', () => diagnosticView.resize());
 }
 
 if (state.currentStep > 1 && !canEnterStep(state.currentStep, state)) state.currentStep = 1;

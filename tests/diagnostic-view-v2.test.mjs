@@ -36,3 +36,23 @@ test('Mapbox activation requires both a runtime token and the library', async ()
   assert.equal(diagnosticView.canUseMapbox({}, { Map: class {} }), false);
   assert.equal(diagnosticView.canUseMapbox({ mapboxAccessToken: 'public-token' }, { Map: class {} }), true);
 });
+
+test('reduced motion removes score and map animation durations', async () => {
+  const diagnosticView = await import('../diagnostic-view.mjs');
+
+  assert.deepEqual(diagnosticView.getMotionSettings(false), { scoreDuration: 780, mapDuration: 1400 });
+  assert.deepEqual(diagnosticView.getMotionSettings(true), { scoreDuration: 0, mapDuration: 0 });
+});
+
+test('diagnostic lifecycle claims each expensive initialization once', async () => {
+  const diagnosticView = await import('../diagnostic-view.mjs');
+  const lifecycle = diagnosticView.createDiagnosticLifecycle();
+
+  assert.equal(lifecycle.claim('score'), true);
+  assert.equal(lifecycle.claim('score'), false);
+  assert.equal(lifecycle.claim('radar'), true);
+  assert.equal(lifecycle.claim('radar'), false);
+  assert.equal(lifecycle.claim('map'), true);
+  assert.equal(lifecycle.claim('map'), false);
+  assert.deepEqual(lifecycle.snapshot(), { score: true, radar: true, map: true });
+});
