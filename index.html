@@ -130,7 +130,46 @@
                 <li data-analysis-stage="4"><span>4</span><div><strong>AI 综合生成诊断结论</strong><small>归纳证据并标记人工复核项</small></div></li>
               </ol>
             </article>
-            <div class="diagnostic-grid" id="diagnosticList"></div>
+            <section class="diagnostic-workbench" id="diagnosticWorkbench" hidden>
+              <article class="project-map-card">
+                <div class="map-card-heading">
+                  <div><p class="eyebrow">项目空间定位</p><h2 id="mapPlaceName">福州 · 三坊七巷</h2></div>
+                  <span class="analysis-complete-status">集团数据综合分析 · 已完成</span>
+                </div>
+                <div class="project-map is-fallback" id="projectMap" role="img" aria-label="三坊七巷当前项目中心点定位">
+                  <div class="mapbox-canvas" id="mapboxCanvas" aria-hidden="true"></div>
+                  <div class="map-fallback" id="mapFallback">
+                    <span class="fallback-road road-one"></span>
+                    <span class="fallback-road road-two"></span>
+                    <span class="fallback-road road-three"></span>
+                    <span class="fallback-block block-one"></span>
+                    <span class="fallback-block block-two"></span>
+                    <span class="fallback-water"></span>
+                    <span class="fallback-place-label">南后街</span>
+                    <span class="fallback-map-marker" aria-hidden="true"></span>
+                    <strong class="fallback-marker-label">当前项目中心点</strong>
+                  </div>
+                  <span class="map-mode-chip" id="mapModeChip">演示定位 · 配置 Mapbox 后显示实时底图</span>
+                </div>
+              </article>
+
+              <aside class="diagnostic-overview-card">
+                <div class="overall-score-block">
+                  <div><p class="eyebrow">空间综合评分</p><strong class="overall-score" id="overallScore" aria-label="综合评分 82 分">82</strong></div>
+                  <p><strong>整体具备活化潜力</strong><span>优先发挥文化资源优势，同时前置处理工程和运营约束。</span></p>
+                </div>
+                <div class="radar-section">
+                  <div class="section-label-row"><h2>六维诊断</h2><span>满分 100</span></div>
+                  <div class="diagnostic-radar" id="diagnosticRadar" role="img" aria-label="区位潜力、文化适配、改造难度、商业承载、夜间潜力和投资谨慎六维雷达图"></div>
+                  <div class="radar-fallback-values" id="radarFallbackValues"></div>
+                </div>
+                <div class="diagnostic-conclusions" id="diagnosticConclusions" aria-label="空间诊断结论"></div>
+              </aside>
+            </section>
+            <details class="diagnostic-evidence" id="diagnosticEvidence" hidden>
+              <summary><span>查看六项诊断依据与人工复核事项</span><small>集团案例、造价、运营及政策规则</small></summary>
+              <div class="diagnostic-evidence-list" id="diagnosticList"></div>
+            </details>
             <article class="version-strip" id="analysisVersion"></article>
           </section>
 

@@ -102,3 +102,28 @@ test('V1 includes print-first PDF delivery and responsive workflow styles', asyn
   assert.match(css, /@media \(max-width: 760px\)/);
   assert.match(css, /\.step-panel\[hidden\]/);
 });
+
+test('V2 space diagnosis uses a result-first map workbench', async () => {
+  const html = await read('index.html');
+  const css = await read('styles.css');
+
+  for (const id of [
+    'diagnosticWorkbench',
+    'projectMap',
+    'overallScore',
+    'diagnosticRadar',
+    'diagnosticConclusions',
+    'diagnosticEvidence',
+    'analysisVersion',
+  ]) {
+    assert.match(html, new RegExp(`id="${id}"`), `${id} should exist in the diagnosis step`);
+  }
+
+  assert.match(css, /\.diagnostic-workbench\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*3fr\)\s+minmax\(320px,\s*2fr\)/s);
+  assert.match(css, /Source Han Serif SC/);
+  assert.match(css, /\.project-map\.is-fallback/);
+  assert.match(css, /\.conclusion-item\.is-positive/);
+  assert.match(css, /\.conclusion-item\.is-review/);
+  assert.match(css, /\.conclusion-item\.is-caution/);
+  assert.match(css, /@media \(max-width: 760px\)[\s\S]*\.diagnostic-workbench\s*\{[^}]*grid-template-columns:\s*1fr/);
+});
