@@ -126,6 +126,7 @@ test('V2 space diagnosis uses a result-first map workbench', async () => {
   assert.match(css, /\.conclusion-item\.is-review/);
   assert.match(css, /\.conclusion-item\.is-caution/);
   assert.match(css, /@media \(max-width: 760px\)[\s\S]*\.diagnostic-workbench\s*\{[^}]*grid-template-columns:\s*1fr/);
+  assert.match(css, /(?:^|\n)\[hidden\]\s*\{\s*display:\s*none\s*!important;\s*\}/);
 });
 
 test('V2 loads local chart and map libraries without embedding a Mapbox token', async () => {
