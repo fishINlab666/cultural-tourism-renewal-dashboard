@@ -42,6 +42,15 @@ test('revenue mix responds to sandbox inputs and always totals 100 percent', asy
   assert.equal(mix.reduce((sum, item) => sum + item.value, 0), 100);
 });
 
+test('revenue mix keeps every category non-negative at slider extremes', async () => {
+  const sandbox = await import('../investment-sandbox.mjs');
+  const mix = sandbox.buildSandboxRevenueMix({ budget: 1000, ticketPrice: 120, vacancy: 10 });
+
+  assert.equal(mix.reduce((sum, item) => sum + item.value, 0), 100);
+  assert.ok(mix.every((item) => item.value >= 0));
+  assert.ok(mix.find((item) => item.name === '文创商业').value >= 8);
+});
+
 test('draft persistence keeps sandbox values separate from confirmed project data', () => {
   const memory = new Map();
   const storage = {

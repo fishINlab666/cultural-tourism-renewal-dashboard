@@ -41,9 +41,15 @@ export function calculateInvestmentSandbox(inputs = {}) {
 
 export function buildSandboxRevenueMix(inputs = {}) {
   const normalized = normalizeSandboxInputs(inputs);
-  const ticket = Math.round(28 + (normalized.ticketPrice - 40) * 0.2);
-  const space = Math.round(32 + (60 - normalized.vacancy) * 0.15);
+  let ticket = Math.round(28 + (normalized.ticketPrice - 40) * 0.2);
+  let space = Math.round(32 + (60 - normalized.vacancy) * 0.15);
   const activity = 18;
+  const minimumRetail = 8;
+  const availableForPrimaryIncome = 100 - activity - minimumRetail;
+  if (ticket + space > availableForPrimaryIncome) {
+    ticket = Math.round(ticket / (ticket + space) * availableForPrimaryIncome);
+    space = availableForPrimaryIncome - ticket;
+  }
   const retail = 100 - ticket - space - activity;
 
   return [
