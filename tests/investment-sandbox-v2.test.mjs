@@ -61,3 +61,19 @@ test('draft persistence keeps sandbox values separate from confirmed project dat
   assert.equal(restored.project.budget, 860);
   assert.equal(restored.project.vacancy, 62);
 });
+
+test('sandbox KPI formatter applies stable units and precision', async () => {
+  const sandbox = await import('../investment-sandbox.mjs');
+
+  assert.equal(sandbox.formatSandboxMetric('totalInvestment', 774), '774 万');
+  assert.equal(sandbox.formatSandboxMetric('annualNetCashFlow', 321), '321 万');
+  assert.equal(sandbox.formatSandboxMetric('paybackYears', 2.36), '2.4 年');
+  assert.equal(sandbox.formatSandboxMetric('roi5', 107.2), '107%');
+});
+
+test('sandbox animation respects reduced motion preference', async () => {
+  const sandbox = await import('../investment-sandbox.mjs');
+
+  assert.deepEqual(sandbox.getSandboxMotionSettings(false), { duration: 420 });
+  assert.deepEqual(sandbox.getSandboxMotionSettings(true), { duration: 0 });
+});

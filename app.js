@@ -11,6 +11,11 @@ import {
 import { parseWorkbook } from './workbook.mjs';
 import { clearDraft, loadDraft, saveDraft } from './storage.mjs';
 import { createDiagnosticView } from './diagnostic-view.mjs';
+import {
+  buildSandboxRevenueMix,
+  calculateInvestmentSandbox,
+  createInvestmentSandboxView,
+} from './investment-sandbox.mjs';
 
 const stepDescriptions = {
   1: '先用统一模板准备项目资料，系统只会要求您处理必要字段。',
@@ -30,6 +35,7 @@ const state = restoredDraft
   : initialState;
 const provider = new LocalAnalysisProvider(sampleData);
 const diagnosticView = createDiagnosticView(window);
+const investmentSandboxView = createInvestmentSandboxView(window);
 let toastTimer;
 
 const $ = (selector) => document.querySelector(selector);
@@ -234,24 +240,35 @@ function renderCost() {
 }
 
 function renderInvestment() {
-  const envelope = calculateScenarioEnvelope(state.project, sampleData.costs, sampleData.plans);
-  const selected = state.completedSteps.includes(6) ? getSelectedPlan(sampleData, state.selectedPlanId) : null;
-  const metrics = selected
-    ? [
-      ['预计总投资', formatWan(selected.capex), `已按「${selected.name}」更新`],
-      ['年化收入', formatWan(selected.revenue), '规则测算结果'],
-      ['年度净现金流', formatWan(selected.netCash), '规则测算结果'],
-      ['预计回本周期', `${selected.payback} 年`, `客户目标 ${state.project.paybackTarget} 年`],
-    ]
-    : [
-      ['候选总投资', `${envelope.investment.low}-${envelope.investment.high} 万`, '选择方案前总体区间'],
-      ['年化收入', `${envelope.revenue.low}-${envelope.revenue.high} 万`, '集团运营指标推演'],
-      ['年度净现金流', `${envelope.cash.low}-${envelope.cash.high} 万`, '集团运营指标推演'],
-      ['预计回本周期', `${envelope.payback.low}-${envelope.payback.high} 年`, `客户目标 ${state.project.paybackTarget} 年`],
-    ];
-  $('#investmentSummary').innerHTML = metrics.map(([label, value, note]) => `<article class="metric-card"><span>${label}</span><strong>${value}</strong><small>${note}</small></article>`).join('');
-  $('#revenueMix').innerHTML = sampleData.revenueMix.map(([label, value]) => `<div class="bar-row"><span>${label}</span><div class="bar-track"><div class="bar-fill" style="width:${value}%"></div></div><strong>${value}%</strong></div>`).join('');
-  $('#riskList').innerHTML = sampleData.risks.map(([label, level, action]) => `<article class="risk-item"><strong>${escapeHtml(label)}</strong><span>${escapeHtml(level)}</span><p>${escapeHtml(action)}</p></article>`).join('');
+  const metrics = calculateInvestmentSandbox(state.investmentSandbox);
+  const mix = buildSandboxRevenueMix(metrics.inputs);
+  state.investmentSandbox = { ...metrics.inputs };
+  const controls = [
+    ['#sandboxBudget', '#sandboxBudgetValue', 'budget', (value) => `${value} 万`],
+    ['#sandboxTicketPrice', '#sandboxTicketPriceValue', 'ticketPrice', (value) => `${value} 元`],
+    ['#sandboxVacancy', '#sandboxVacancyValue', 'vacancy', (value) => `${value}%`],
+  ];
+  controls.forEach(([inputSelector, outputSelector, key, formatter]) => {
+    const input = $(inputSelector);
+    const value = metrics.inputs[key];
+    input.value = String(value);
+    input.style.setProperty('--range-progress', `${(value - Number(input.min)) / (Number(input.max) - Number(input.min)) * 100}%`);
+    $(outputSelector).textContent = formatter(value);
+  });
+  if (state.currentStep === 5) {
+    window.requestAnimationFrame(() => investmentSandboxView.render({
+      metrics,
+      mix,
+      elements: {
+        totalInvestment: $('#totalInvestmentKpi'),
+        annualNetCashFlow: $('#annualNetCashFlowKpi'),
+        paybackYears: $('#paybackKpi'),
+        roi5: $('#roi5Kpi'),
+        revenueMix: $('#revenueMix'),
+        revenueLegend: $('#revenueLegend'),
+      },
+    }));
+  }
 }
 
 function renderPlans() {
@@ -490,6 +507,15 @@ function bindEvents() {
     persistState();
     renderAll();
   });
+  $('#investmentSandbox').addEventListener('input', (event) => {
+    if (!event.target.matches('input[type="range"]')) return;
+    state.investmentSandbox = {
+      ...state.investmentSandbox,
+      [event.target.name]: Number(event.target.value),
+    };
+    persistState();
+    renderInvestment();
+  });
   $('#confirmPlanButton').addEventListener('click', confirmPlan);
 
   $('#visualModeButtons').addEventListener('click', (event) => {
@@ -505,7 +531,10 @@ function bindEvents() {
     clearDraft();
     window.location.reload();
   });
-  window.addEventListener('resize', () => diagnosticView.resize());
+  window.addEventListener('resize', () => {
+    diagnosticView.resize();
+    investmentSandboxView.resize();
+  });
 }
 
 if (state.currentStep > 1 && !canEnterStep(state.currentStep, state)) state.currentStep = 1;
