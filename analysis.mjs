@@ -154,6 +154,11 @@ export class LocalAnalysisProvider {
       run: makeRun(this.data.knowledge),
       project: { ...project },
       diagnostics: this.data.diagnostics.map((item) => ({ ...item, evidence: resolveEvidence(item.evidence) })),
+      overview: {
+        ...this.data.overview,
+        map: { ...this.data.overview.map, center: [...this.data.overview.map.center] },
+        conclusions: this.data.overview.conclusions.map((item) => ({ ...item })),
+      },
       scenarios: this.data.plans.map((plan) => ({ ...plan, evidence: resolveEvidence(plan.evidence) })),
       evidence: this.data.evidence.map((item) => ({ ...item })),
       fallback: false,

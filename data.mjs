@@ -26,10 +26,10 @@ export const FIELD_DEFINITIONS = [
 
 export const sampleData = {
   project: {
-    name: '榕城古厝活化示范项目',
-    district: '榕城古厝活化示范项目',
+    name: '三坊七巷历史文化街区活化示范单元',
+    district: '三坊七巷历史文化街区活化示范单元',
     type: '历史街区活化',
-    location: '福建省福州市历史文化街区',
+    location: '福建省福州市鼓楼区三坊七巷历史文化街区',
     area: 4200,
     vacancy: 62,
     heritage: '历史建筑',
@@ -38,7 +38,7 @@ export const sampleData = {
     audience: '文旅主管部门',
     stylePreference: '低干预修缮、在地文化、当代简约',
     organization: '某文旅发展集团',
-    description: '盘活闲置院落，引入文化体验、轻餐饮和研学活动，同时控制文保、消防与夜间运营风险。',
+    description: '以三坊七巷街区中的示范院落为研究单元，引入文化体验、轻餐饮和研学活动，同时控制文保、消防与夜间运营风险。',
   },
   knowledge: {
     version: 'KB-2026.06-R1',
@@ -61,6 +61,19 @@ export const sampleData = {
     { label: '夜间运营潜力', value: 73, summary: '可发展小规模夜游和活动，但需控制噪声、照明与居民影响。', evidence: ['operation', 'policy'], reviewNote: '需确认周边居民区和夜间审批边界。' },
     { label: '投资谨慎指数', value: 43, summary: '建议分期投入，以首开区验证客流与招商效率。', evidence: ['case', 'cost', 'operation'], reviewNote: '首期投资比例建议由财务与工程团队联合确认。' },
   ],
+  overview: {
+    score: 82,
+    map: {
+      center: [119.2965, 26.0875],
+      label: '当前项目中心点',
+      place: '福州 · 三坊七巷',
+    },
+    conclusions: [
+      { level: 'positive', label: '优势', text: '区位与文化资源优势显著，适合低干预活化。' },
+      { level: 'review', label: '复核', text: '消防疏散、夜间噪声与居民影响需专项复核。' },
+      { level: 'caution', label: '谨慎', text: '建议分期投入，首开区先行验证客流与招商效率。' },
+    ],
+  },
   plans: [
     {
       id: 'steady', name: '稳健保育型', duration: '8-10 周',
