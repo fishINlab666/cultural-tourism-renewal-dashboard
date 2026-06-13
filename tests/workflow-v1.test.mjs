@@ -1,0 +1,104 @@
+import { readFile, access } from 'node:fs/promises';
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+
+const root = new URL('../', import.meta.url);
+const requiredFiles = [
+  'index.html',
+  'styles.css',
+  'app.js',
+  'analysis.mjs',
+  'data.mjs',
+  'workbook.mjs',
+  'storage.mjs',
+];
+
+const orderedSteps = [
+  '项目录入',
+  '数据补全',
+  '空间诊断',
+  '工程造价',
+  '投资测算',
+  '三案选择',
+  '视觉深化',
+  '报告交付',
+];
+
+async function read(fileName) {
+  return readFile(new URL(fileName, root), 'utf8');
+}
+
+test('V1 exposes the eight-step client workflow in business order', async () => {
+  const html = await read('index.html');
+  let cursor = -1;
+
+  for (const step of orderedSteps) {
+    const next = html.indexOf(step);
+    assert.ok(next > cursor, `${step} should appear after the previous step`);
+    cursor = next;
+  }
+
+  assert.match(html, /data-step-panel="1"/);
+  assert.match(html, /data-step-panel="8"/);
+  assert.match(html, /id="previousStepButton"/);
+  assert.match(html, /id="nextStepButton"/);
+});
+
+test('V1 provides a real Excel intake and a correction surface', async () => {
+  const html = await read('index.html');
+  await access(new URL('assets/项目基础数据模板.xlsx', root));
+
+  assert.match(html, /href="assets\/项目基础数据模板\.xlsx"/);
+  assert.match(html, /accept="\.xlsx,application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet"/);
+  assert.match(html, /id="workbookIssues"/);
+  assert.match(html, /id="projectCorrectionForm"/);
+  assert.match(html, /不会自动进入集团案例库/);
+  assert.match(html, /不会用于模型训练/);
+});
+
+test('V1 keeps scenarios behind analysis and does not preselect a recommendation', async () => {
+  const html = await read('index.html');
+  const source = await read('app.js');
+  const data = await read('data.mjs');
+
+  assert.ok(html.indexOf('工程造价') < html.indexOf('三案选择'));
+  assert.ok(html.indexOf('投资测算') < html.indexOf('三案选择'));
+  assert.doesNotMatch(html, /推荐方案[\s\S]{0,80}校园扩展型/);
+  assert.match(data, /selectedPlanId:\s*null/);
+  assert.match(source, /canEnterStep/);
+});
+
+test('V1 includes evidence, versioning and provider boundaries', async () => {
+  const files = await Promise.all(requiredFiles.map(read));
+  const combined = files.join('\n');
+
+  for (const name of ['LocalAnalysisProvider', 'RemoteAnalysisProvider', 'AnalysisRun', 'EvidenceReference']) {
+    assert.match(combined, new RegExp(name), `${name} should be represented`);
+  }
+
+  assert.match(combined, /集团知识库/);
+  assert.match(combined, /规则版本/);
+  assert.match(combined, /模型版本/);
+  assert.match(combined, /人工复核/);
+});
+
+test('V1 remains local-only and contains no client-side secrets or database connections', async () => {
+  const files = await Promise.all(requiredFiles.map(read));
+  const combined = files.join('\n');
+
+  assert.doesNotMatch(combined, /\bfetch\s*\(/);
+  assert.doesNotMatch(combined, /XMLHttpRequest/);
+  assert.doesNotMatch(combined, /https?:\/\//);
+  assert.doesNotMatch(combined, /(?:api[_-]?key|password|secret)\s*[:=]\s*['"][^'"]+/i);
+  assert.doesNotMatch(combined, /(?:postgres|mysql|mongodb):\/\//i);
+});
+
+test('V1 includes print-first PDF delivery and responsive workflow styles', async () => {
+  const html = await read('index.html');
+  const css = await read('styles.css');
+
+  assert.match(html, /id="printReportButton"/);
+  assert.match(css, /@media print/);
+  assert.match(css, /@media \(max-width: 760px\)/);
+  assert.match(css, /\.step-panel\[hidden\]/);
+});
