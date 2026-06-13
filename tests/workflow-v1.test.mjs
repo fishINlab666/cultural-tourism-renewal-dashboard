@@ -127,3 +127,21 @@ test('V2 space diagnosis uses a result-first map workbench', async () => {
   assert.match(css, /\.conclusion-item\.is-caution/);
   assert.match(css, /@media \(max-width: 760px\)[\s\S]*\.diagnostic-workbench\s*\{[^}]*grid-template-columns:\s*1fr/);
 });
+
+test('V2 loads local chart and map libraries without embedding a Mapbox token', async () => {
+  const html = await read('index.html');
+
+  await Promise.all([
+    access(new URL('vendor/echarts.min.js', root)),
+    access(new URL('vendor/mapbox-gl.js', root)),
+    access(new URL('vendor/mapbox-gl.css', root)),
+    access(new URL('vendor/LICENSE.echarts.txt', root)),
+    access(new URL('vendor/LICENSE.mapbox-gl.txt', root)),
+  ]);
+
+  assert.match(html, /href="vendor\/mapbox-gl\.css"/);
+  assert.match(html, /src="vendor\/mapbox-gl\.js"/);
+  assert.match(html, /src="vendor\/echarts\.min\.js"/);
+  assert.match(html, /window\.APP_CONFIG/);
+  assert.doesNotMatch(html, /pk\.[A-Za-z0-9._-]{20,}/);
+});

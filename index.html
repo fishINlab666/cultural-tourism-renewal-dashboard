@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>城更智算舱｜文旅存量空间投前决策</title>
     <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="vendor/mapbox-gl.css">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -229,6 +230,9 @@
       </main>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script>window.APP_CONFIG = window.APP_CONFIG || {};</script>
+    <script src="vendor/mapbox-gl.js"></script>
+    <script src="vendor/echarts.min.js"></script>
     <script type="module" src="app.js"></script>
   </body>
 </html>
