@@ -238,21 +238,56 @@
           </section>
 
           <section class="step-panel" data-step-panel="7" aria-labelledby="stepTitle" hidden>
-            <div class="visual-layout">
-              <div class="visual-canvas" id="visualCanvas" data-mode="day" role="img" aria-label="选中方案的概念视觉深化">
-                <div class="visual-sky"></div><div class="roof roof-back"></div><div class="roof roof-front"></div><div class="courtyard"></div>
-                <span class="visual-label label-one">文化体验</span><span class="visual-label label-two">院落活动</span><span class="visual-label label-three">夜游动线</span>
-              </div>
-              <aside class="primary-card visual-controls">
-                <p class="eyebrow">已选方案</p><h2 id="selectedPlanTitle">-</h2><p id="selectedPlanSummary"></p>
-                <div class="segmented-control" id="visualModeButtons" aria-label="视觉深化模式">
-                  <button class="is-active" type="button" data-mode="day">日间场景</button>
-                  <button type="button" data-mode="night">夜间运营</button>
-                  <button type="button" data-mode="material">材料策略</button>
+            <div class="visual-deepening">
+              <header id="visualSummary" class="visual-summary primary-card">
+                <div>
+                  <p class="eyebrow">已确认方案</p>
+                  <h2 id="selectedPlanTitle">-</h2>
+                  <p id="selectedPlanSummary"></p>
                 </div>
-                <div class="swatch-grid" id="materialSwatches"></div>
-                <div class="review-note"><strong>成果边界</strong><span>概念视觉用于投前沟通，不作为施工图、报批图或最终设计成果。</span></div>
-              </aside>
+                <div class="visual-summary-metrics">
+                  <span>工程造价</span>
+                  <strong id="visualCostRange">-</strong>
+                  <small>AI 概念模拟，非现场实拍</small>
+                </div>
+              </header>
+
+              <div id="visualModeButtons" class="visual-tabs" role="tablist" aria-label="视觉深化内容">
+                <button id="visualTabDay" type="button" role="tab" aria-controls="visualComparisonPanel" aria-selected="true" data-mode="day">日间</button>
+                <button id="visualTabNight" type="button" role="tab" aria-controls="visualComparisonPanel" aria-selected="false" data-mode="night">夜间</button>
+                <button id="visualTabMaterial" type="button" role="tab" aria-controls="visualMaterialPanel" aria-selected="false" data-mode="material">材料说明</button>
+              </div>
+
+              <section id="visualComparisonPanel" class="visual-comparison-panel" role="tabpanel" aria-labelledby="visualTabDay">
+                <div id="visualComparison" class="visual-comparison" style="--visual-split: 50%">
+                  <img id="visualBeforeImage" class="visual-image visual-before" width="1664" height="936" alt="院落现状 AI 概念模拟">
+                  <div class="visual-after-clip">
+                    <img id="visualAfterImage" class="visual-image visual-after" width="1664" height="936" alt="院落改造后 AI 概念模拟">
+                  </div>
+                  <span class="comparison-label is-before">现状模拟</span>
+                  <span class="comparison-label is-after">方案效果</span>
+                  <span class="comparison-divider" aria-hidden="true"></span>
+                  <input id="visualSplit" type="range" min="0" max="100" value="50" aria-label="调整改造前后分割位置">
+                </div>
+                <p id="visualImageStatus" class="visual-image-status" role="status"></p>
+              </section>
+
+              <section id="visualMaterialPanel" class="visual-material-panel" role="tabpanel" aria-labelledby="visualTabMaterial" hidden>
+                <div class="visual-hotspot-stage">
+                  <img src="assets/visual-deepening/courtyard-day-after.png" width="1664" height="936" loading="lazy" alt="院落改造后材料与工程投入示意">
+                  <div id="visualHotspots"></div>
+                </div>
+                <aside id="visualBudgetDetail" class="visual-budget-detail primary-card"></aside>
+                <div class="visual-allocation">
+                  <div id="visualAllocationBar"></div>
+                  <div id="visualAllocationLegend"></div>
+                </div>
+              </section>
+
+              <div class="review-note">
+                <strong>成果边界</strong>
+                <span>概念视觉不作为施工图、报批图或投资承诺。</span>
+              </div>
             </div>
           </section>
 

@@ -165,3 +165,24 @@ test('V2 investment step exposes the three-slider sandbox and KPI donut layout',
   assert.match(css, /\.investment-kpi-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s);
   assert.match(css, /@media \(max-width: 760px\)[\s\S]*\.investment-sandbox-layout\s*\{[^}]*grid-template-columns:\s*1fr/);
 });
+
+test('V2 visual deepening exposes comparison tabs and cost-linked material hotspots', async () => {
+  const html = await read('index.html');
+
+  await Promise.all([
+    'courtyard-day-before.png',
+    'courtyard-day-after.png',
+    'courtyard-night-before.png',
+    'courtyard-night-after.png',
+  ].map((fileName) => access(new URL(`assets/visual-deepening/${fileName}`, root))));
+
+  for (const id of [
+    'visualSummary', 'visualModeButtons', 'visualComparison', 'visualSplit',
+    'visualBeforeImage', 'visualAfterImage', 'visualMaterialPanel',
+    'visualHotspots', 'visualBudgetDetail', 'visualAllocationBar',
+  ]) assert.match(html, new RegExp(`id="${id}"`));
+
+  assert.match(html, /role="tablist"/);
+  assert.match(html, /role="slider"|type="range"/);
+  assert.match(html, /AI 概念模拟，非现场实拍/);
+});
