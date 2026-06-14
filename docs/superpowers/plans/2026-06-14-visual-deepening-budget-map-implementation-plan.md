@@ -32,7 +32,7 @@
 - Create: `assets/visual-deepening/courtyard-night-before.png`
 - Create: `assets/visual-deepening/courtyard-night-after.png`
 
-- [ ] **Step 1: Generate the day baseline master**
+- [x] **Step 1: Generate the day baseline master**
 
 Use the image-generation skill with this fixed scene prompt:
 
@@ -42,7 +42,7 @@ Create a photorealistic 16:9 architectural concept image of a fictional traditio
 
 Save the selected result as `assets/visual-deepening/courtyard-day-before.png`.
 
-- [ ] **Step 2: Edit the day master into the activated design**
+- [x] **Step 2: Edit the day master into the activated design**
 
 Use image editing on the day baseline, preserving camera and architecture exactly:
 
@@ -52,7 +52,7 @@ Keep the exact camera, perspective, roof lines, walls, columns, doors, paving jo
 
 Save as `assets/visual-deepening/courtyard-day-after.png`.
 
-- [ ] **Step 3: Edit both day images into matching night images**
+- [x] **Step 3: Edit both day images into matching night images**
 
 For each source, preserve geometry exactly and change only time/lighting. The after image adds warm low-level eave lights, shielded courtyard lights, and a softly lit cultural display; avoid festival-scale floodlighting.
 
@@ -63,7 +63,7 @@ assets/visual-deepening/courtyard-night-before.png
 assets/visual-deepening/courtyard-night-after.png
 ```
 
-- [ ] **Step 4: Verify image dimensions and visual registration**
+- [x] **Step 4: Verify image dimensions and visual registration**
 
 If image generation returns 1536 x 1024 masters, normalize all four to the same centered 16:9 crop before inspection:
 
@@ -79,7 +79,7 @@ sips -g pixelWidth -g pixelHeight assets/visual-deepening/*.png
 
 Expected: all four images have identical 16:9 dimensions. Inspect all four at original detail and reject any pair where roof ridges, columns, wall openings, or paving lines move between before and after.
 
-- [ ] **Step 5: Commit the approved assets**
+- [x] **Step 5: Commit the approved assets**
 
 ```bash
 git add assets/visual-deepening
@@ -92,7 +92,7 @@ git commit -m "assets: add courtyard visual deepening concepts"
 - Create: `visual-deepening.mjs`
 - Create: `tests/visual-deepening-v2.test.mjs`
 
-- [ ] **Step 1: Write failing cost-allocation tests**
+- [x] **Step 1: Write failing cost-allocation tests**
 
 Create `tests/visual-deepening-v2.test.mjs` with tests that require `buildVisualBudget()` to return six stable groups, preserve the calculated low/high totals, and round displayed percentages to exactly 100:
 
@@ -127,7 +127,7 @@ test('visual budget never invents an amount for a missing cost category', () => 
 });
 ```
 
-- [ ] **Step 2: Run the new test and verify RED**
+- [x] **Step 2: Run the new test and verify RED**
 
 Run:
 
@@ -137,7 +137,7 @@ node --test tests/visual-deepening-v2.test.mjs
 
 Expected: FAIL because `visual-deepening.mjs` and `buildVisualBudget()` do not exist.
 
-- [ ] **Step 3: Implement the minimal explicit mapping**
+- [x] **Step 3: Implement the minimal explicit mapping**
 
 Create `visual-deepening.mjs` with a frozen six-item definition. Fully allocate the six current cost rows into six customer-facing groups without omission or double counting:
 
@@ -154,7 +154,7 @@ const VISUAL_BUDGET_DEFINITIONS = [
 
 The `share` values partition `基础工程与机电` once rather than counting it twice. `buildVisualBudget()` must first split rows, then total the midpoint for percentages, assign missing states, and absorb rounding residue into the last available item.
 
-- [ ] **Step 4: Run the focused test and verify GREEN**
+- [x] **Step 4: Run the focused test and verify GREEN**
 
 ```bash
 node --test tests/visual-deepening-v2.test.mjs
@@ -162,7 +162,7 @@ node --test tests/visual-deepening-v2.test.mjs
 
 Expected: both cost-allocation tests PASS.
 
-- [ ] **Step 5: Commit the mapping module**
+- [x] **Step 5: Commit the mapping module**
 
 ```bash
 git add visual-deepening.mjs tests/visual-deepening-v2.test.mjs
@@ -176,7 +176,7 @@ git commit -m "feat: map engineering costs to visual hotspots"
 - Modify: `tests/visual-deepening-v2.test.mjs`
 - Modify: `data.mjs:124-145`
 
-- [ ] **Step 1: Add failing interaction-state tests**
+- [x] **Step 1: Add failing interaction-state tests**
 
 Append tests for clamping the split position, selecting the correct image pair, and preserving state across tab changes:
 
@@ -206,7 +206,7 @@ test('tab changes preserve the split and selected budget item', () => {
 });
 ```
 
-- [ ] **Step 2: Run and verify RED**
+- [x] **Step 2: Run and verify RED**
 
 ```bash
 node --test tests/visual-deepening-v2.test.mjs
@@ -214,7 +214,7 @@ node --test tests/visual-deepening-v2.test.mjs
 
 Expected: FAIL for the three missing exports.
 
-- [ ] **Step 3: Implement state helpers and defaults**
+- [x] **Step 3: Implement state helpers and defaults**
 
 Implement the three helpers in `visual-deepening.mjs`. Extend `createInitialState()` in `data.mjs`:
 
@@ -226,7 +226,7 @@ selectedVisualBudgetId: 'restoration',
 
 Keep storage compatibility by relying on the existing merge with `initialState`; old drafts will receive the new defaults automatically.
 
-- [ ] **Step 4: Run focused and persistence tests**
+- [x] **Step 4: Run focused and persistence tests**
 
 ```bash
 node --test tests/visual-deepening-v2.test.mjs tests/workflow-v1.test.mjs
@@ -234,7 +234,7 @@ node --test tests/visual-deepening-v2.test.mjs tests/workflow-v1.test.mjs
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit interaction state**
+- [x] **Step 5: Commit interaction state**
 
 ```bash
 git add visual-deepening.mjs tests/visual-deepening-v2.test.mjs data.mjs
@@ -247,7 +247,7 @@ git commit -m "feat: add visual comparison interaction state"
 - Modify: `tests/workflow-v1.test.mjs`
 - Modify: `index.html:240-257`
 
-- [ ] **Step 1: Write a failing workflow structure test**
+- [x] **Step 1: Write a failing workflow structure test**
 
 Append a test that checks the new IDs and accessibility contract:
 
@@ -267,7 +267,7 @@ test('V2 visual deepening exposes comparison tabs and cost-linked material hotsp
 });
 ```
 
-- [ ] **Step 2: Run and verify RED**
+- [x] **Step 2: Run and verify RED**
 
 ```bash
 node --test tests/workflow-v1.test.mjs
@@ -275,7 +275,7 @@ node --test tests/workflow-v1.test.mjs
 
 Expected: FAIL because the new elements are absent.
 
-- [ ] **Step 3: Replace the step-seven HTML**
+- [x] **Step 3: Replace the step-seven HTML**
 
 Use one `visual-deepening` container with this complete structural skeleton; keep explanatory copy concise and let the view module populate dynamic values:
 
@@ -313,7 +313,7 @@ Inside comparison, use two absolutely aligned `<img>` elements and a full-width 
 
 Inside material, include the day-after image, an empty hotspot layer, a detail card, and an empty allocation bar/legend for `visual-deepening.mjs` to populate.
 
-- [ ] **Step 4: Run the workflow test and verify GREEN**
+- [x] **Step 4: Run the workflow test and verify GREEN**
 
 ```bash
 node --test tests/workflow-v1.test.mjs
@@ -321,7 +321,7 @@ node --test tests/workflow-v1.test.mjs
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit semantic markup**
+- [x] **Step 5: Commit semantic markup**
 
 ```bash
 git add index.html tests/workflow-v1.test.mjs
@@ -336,7 +336,7 @@ git commit -m "feat: add visual deepening comparison structure"
 - Modify: `styles.css:284-302,340-390`
 - Modify: `tests/visual-deepening-v2.test.mjs`
 
-- [ ] **Step 1: Add a failing DOM-view contract test**
+- [x] **Step 1: Add a failing DOM-view contract test**
 
 Test the exported `createVisualDeepeningView()` using minimal fake elements: rendering must set both image paths, apply `--visual-split`, produce six hotspot buttons, update the detail text, and mark the selected allocation segment.
 
@@ -350,7 +350,7 @@ test('visual view synchronizes images hotspots detail and allocation selection',
 
 Keep detailed state behavior in pure-function tests; do not introduce jsdom or a new dependency.
 
-- [ ] **Step 2: Run and verify RED**
+- [x] **Step 2: Run and verify RED**
 
 ```bash
 node --test tests/visual-deepening-v2.test.mjs
@@ -358,7 +358,7 @@ node --test tests/visual-deepening-v2.test.mjs
 
 Expected: FAIL because the view exports are missing.
 
-- [ ] **Step 3: Implement the view controller**
+- [x] **Step 3: Implement the view controller**
 
 `createVisualDeepeningView(windowObject)` must expose:
 
@@ -371,7 +371,7 @@ Expected: FAIL because the view exports are missing.
 
 `render()` sets tab ARIA state, image sources/alt text, split CSS variable, summary text, hotspot markup, selected detail, and the allocation bar. `bind()` attaches one-time delegated listeners for tab clicks, range input, hotspot/allocation clicks, and image errors. Use `textContent` and DOM creation for dynamic customer data; do not interpolate untrusted text into HTML.
 
-- [ ] **Step 4: Wire the view into `app.js`**
+- [x] **Step 4: Wire the view into `app.js`**
 
 Import `createVisualDeepeningView`, initialize it beside the diagnostic and investment views, and replace `renderVisual()` with:
 
@@ -394,7 +394,7 @@ function renderVisual() {
 
 Call `visualDeepeningView.bind()` once from `bindEvents()`. Its callback updates the three state keys, persists the draft, and calls `renderVisual()`. Remove the old `#visualModeButtons` click handler and swatch rendering.
 
-- [ ] **Step 5: Replace placeholder CSS with the finished layout**
+- [x] **Step 5: Replace placeholder CSS with the finished layout**
 
 Implement:
 
@@ -406,7 +406,7 @@ Implement:
 - Allocation segments with minimum 44px interaction height and text legend below.
 - Error, focus, hover, selected, reduced-motion, and image aspect-ratio states.
 
-- [ ] **Step 6: Run focused tests and static checks**
+- [x] **Step 6: Run focused tests and static checks**
 
 ```bash
 node --test tests/visual-deepening-v2.test.mjs tests/workflow-v1.test.mjs
@@ -415,7 +415,7 @@ git diff --check
 
 Expected: all tests PASS; `git diff --check` has no output.
 
-- [ ] **Step 7: Commit the integrated visual page**
+- [x] **Step 7: Commit the integrated visual page**
 
 ```bash
 git add app.js styles.css visual-deepening.mjs tests/visual-deepening-v2.test.mjs
@@ -428,7 +428,7 @@ git commit -m "feat: connect visual deepening to engineering costs"
 - Modify if required by findings: `index.html`, `styles.css`, `app.js`, `visual-deepening.mjs`, `tests/*.test.mjs`
 - Modify: `docs/superpowers/plans/2026-06-14-visual-deepening-budget-map-implementation-plan.md`
 
-- [ ] **Step 1: Run the complete automated suite**
+- [x] **Step 1: Run the complete automated suite**
 
 ```bash
 node --test tests/*.test.mjs
@@ -436,7 +436,7 @@ node --test tests/*.test.mjs
 
 Expected: all existing and new tests PASS with no failures or warnings.
 
-- [ ] **Step 2: Verify the V2 desktop flow in the in-app Browser**
+- [x] **Step 2: Verify the V2 desktop flow in the in-app Browser**
 
 Open `http://localhost:5176/`, load the demonstration project, advance to step 7, and verify:
 
@@ -448,15 +448,15 @@ Open `http://localhost:5176/`, load the demonstration project, advance to step 7
 6. Amounts match step 4 for the confirmed plan and percentages total 100.
 7. The AI concept boundary is visible without opening another panel.
 
-- [ ] **Step 3: Verify responsive and keyboard behavior**
+- [x] **Step 3: Verify responsive and keyboard behavior**
 
 At a mobile viewport near 390 x 844, verify no horizontal scrolling, the material panel stacks, and all controls remain at least 44px. Use Tab, arrow keys, Enter, and Space to operate tabs, the range control, hotspots, and allocation rows.
 
-- [ ] **Step 4: Verify scenario recalculation**
+- [x] **Step 4: Verify scenario recalculation**
 
 Return to step 6, select each of `steady`, `growth`, and `landmark`, confirm it, then revisit step 7. For each plan, verify the name, total range, six amounts, and percentages update without changing the four concept image files.
 
-- [ ] **Step 5: Mark the plan complete and create a named rollback point**
+- [x] **Step 5: Mark the plan complete and create a named rollback point**
 
 Check completed boxes in this file, then run:
 
