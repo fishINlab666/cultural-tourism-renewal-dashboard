@@ -91,6 +91,20 @@ test('visual budget never invents an amount for a missing cost category', () => 
   assert.equal(survey.high, null);
 });
 
+test('split budget groups explain the scoped work shown by each hotspot', () => {
+  const plan = sampleData.plans.find((item) => item.id === 'growth');
+  const cost = calculateCostRange(sampleData.project, sampleData.costs, plan);
+  const budget = buildVisualBudget(cost.rows);
+  const restoration = budget.items.find((item) => item.id === 'restoration');
+  const infrastructure = budget.items.find((item) => item.id === 'infrastructure');
+  const lighting = budget.items.find((item) => item.id === 'lighting');
+
+  assert.match(restoration.materials.join('；'), /木构|墙面/);
+  assert.doesNotMatch(restoration.materials.join('；'), /消防/);
+  assert.match(infrastructure.materials.join('；'), /消防.*隐蔽机电/);
+  assert.match(lighting.materials.join('；'), /照明/);
+});
+
 test('comparison split is clamped to the full image bounds', () => {
   assert.equal(clampVisualSplit(-8), 0);
   assert.equal(clampVisualSplit(64), 64);

@@ -1,9 +1,21 @@
 const VISUAL_BUDGET_DEFINITIONS = Object.freeze([
   { id: 'survey', number: 1, label: '勘测与专业评估', sources: [{ category: '勘测与数据采集', share: 1 }, { category: '专业评估与报告', share: 1 }], color: '#8A7764', anchor: [18, 72] },
-  { id: 'restoration', number: 2, label: '木构与墙面修缮', sources: [{ category: '基础工程与机电', share: 0.45 }], color: '#785C48', anchor: [28, 30] },
-  { id: 'infrastructure', number: 3, label: '消防与隐蔽机电', sources: [{ category: '基础工程与机电', share: 0.55 }], color: '#536B63', anchor: [76, 55] },
+  {
+    id: 'restoration', number: 2, label: '木构与墙面修缮', sources: [{ category: '基础工程与机电', share: 0.45 }], color: '#785C48', anchor: [28, 30],
+    materials: ['木构检修、墙面修补、基础加固与防潮处理'],
+    principles: ['保留原构件和原材料，优先修补与局部替换'],
+  },
+  {
+    id: 'infrastructure', number: 3, label: '消防与隐蔽机电', sources: [{ category: '基础工程与机电', share: 0.55 }], color: '#536B63', anchor: [76, 55],
+    materials: ['消防、弱电、给排水与隐蔽机电更新'],
+    principles: ['优先安全与开业必需项，管线尽量隐蔽且保留检修条件'],
+  },
   { id: 'courtyard', number: 4, label: '院落铺地与绿化', sources: [{ category: '院落与景观提升', share: 1 }], color: '#356859', anchor: [50, 74] },
-  { id: 'lighting', number: 5, label: '檐下与庭院照明', sources: [{ category: '数字文旅系统', share: 1 }], color: '#B28242', anchor: [67, 28] },
+  {
+    id: 'lighting', number: 5, label: '檐下与庭院照明', sources: [{ category: '数字文旅系统', share: 1 }], color: '#B28242', anchor: [67, 28],
+    materials: ['檐下照明、庭院灯、导览互动与夜间运营控制系统'],
+    principles: ['采用低照度、可分区控制的设备，避免眩光和过度亮化'],
+  },
   { id: 'experience', number: 6, label: '可逆展陈与运营启动', sources: [{ category: '内容与运营启动', share: 1 }], color: '#A9473F', anchor: [48, 46] },
 ]);
 
@@ -55,8 +67,8 @@ function allocateDefinition(definition, rowsByCategory) {
       low: null,
       high: null,
       percent: 0,
-      materials: sourceRows.map(({ row }) => row?.material).filter(Boolean),
-      principles: sourceRows.map(({ row }) => row?.alternative).filter(Boolean),
+      materials: definition.materials ?? sourceRows.map(({ row }) => row?.material).filter(Boolean),
+      principles: definition.principles ?? sourceRows.map(({ row }) => row?.alternative).filter(Boolean),
     };
   }
 
@@ -66,8 +78,8 @@ function allocateDefinition(definition, rowsByCategory) {
     low: sourceRows.reduce((sum, { row, share }) => sum + row.low * share, 0),
     high: sourceRows.reduce((sum, { row, share }) => sum + row.high * share, 0),
     percent: 0,
-    materials: [...new Set(sourceRows.map(({ row }) => row.material).filter(Boolean))],
-    principles: [...new Set(sourceRows.map(({ row }) => row.alternative).filter(Boolean))],
+    materials: definition.materials ?? [...new Set(sourceRows.map(({ row }) => row.material).filter(Boolean))],
+    principles: definition.principles ?? [...new Set(sourceRows.map(({ row }) => row.alternative).filter(Boolean))],
   };
 }
 
