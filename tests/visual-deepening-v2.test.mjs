@@ -21,6 +21,7 @@ class FakeElement {
     this.className = '';
     this.dataset = {};
     this.hidden = false;
+    this.listeners = new Map();
     this.src = '';
     this._textContent = '';
     this.value = '';
@@ -39,6 +40,18 @@ class FakeElement {
   }
 
   append(...children) { this.children.push(...children); }
+  addEventListener(type, listener) {
+    this.listeners.set(type, [...(this.listeners.get(type) ?? []), listener]);
+  }
+  dispatch(type, event) {
+    for (const listener of this.listeners.get(type) ?? []) listener(event);
+  }
+  closest(selector) {
+    if (selector === '[data-mode]' && this.dataset.mode) return this;
+    if (selector === '[data-budget-id]' && this.dataset.budgetId) return this;
+    return null;
+  }
+  focus() { this.focused = true; }
   replaceChildren(...children) { this.children = children; }
   setAttribute(name, value) { this.attributes.set(name, String(value)); }
   getAttribute(name) { return this.attributes.get(name); }
@@ -147,4 +160,42 @@ test('visual view synchronizes images hotspots detail and allocation selection',
   assert.match(elements.budgetDetail.textContent, /院落铺地与绿化/);
   assert.equal(elements.allocationBar.children.length, 6);
   assert.equal(elements.allocationBar.children[3].getAttribute('aria-pressed'), 'true');
+});
+
+test('visual view emits explicit keyboard actions for tabs split and budget controls', () => {
+  const document = createFakeDocument();
+  const element = (tagName) => new FakeElement(document, tagName);
+  const tabs = ['day', 'night', 'material'].map((mode) => {
+    const tab = element('button');
+    tab.dataset.mode = mode;
+    return tab;
+  });
+  const elements = {
+    modeButtons: element('div'),
+    tabs,
+    split: element('input'),
+    hotspots: element('div'),
+    allocationBar: element('div'),
+    allocationLegend: element('div'),
+    beforeImage: element('img'),
+    afterImage: element('img'),
+    imageStatus: element('p'),
+  };
+  const actions = [];
+  const preventDefault = () => {};
+  const view = createVisualDeepeningView({});
+  view.bind({ elements, onStateChange: (action) => actions.push(action) });
+
+  elements.modeButtons.dispatch('keydown', { key: 'Enter', target: tabs[2], preventDefault });
+  elements.split.value = '63';
+  elements.split.dispatch('keydown', { key: 'ArrowRight', target: elements.split, preventDefault });
+  const budgetButton = element('button');
+  budgetButton.dataset.budgetId = 'courtyard';
+  elements.hotspots.dispatch('keydown', { key: 'Enter', target: budgetButton, preventDefault });
+
+  assert.deepEqual(actions, [
+    { type: 'mode', value: 'material' },
+    { type: 'split', value: 64 },
+    { type: 'budget', value: 'courtyard' },
+  ]);
 });

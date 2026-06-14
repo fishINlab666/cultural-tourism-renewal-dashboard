@@ -234,6 +234,13 @@ export function createVisualDeepeningView() {
         if (button) onStateChange({ type: 'mode', value: button.dataset.mode });
       });
       elements.modeButtons.addEventListener('keydown', (event) => {
+        if (['Enter', ' ', 'Space'].includes(event.key)) {
+          const button = event.target.closest('[data-mode]');
+          if (!button) return;
+          event.preventDefault();
+          onStateChange({ type: 'mode', value: button.dataset.mode });
+          return;
+        }
         if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
         const currentIndex = elements.tabs.indexOf(event.target);
         if (currentIndex < 0) return;
@@ -247,10 +254,29 @@ export function createVisualDeepeningView() {
         onStateChange({ type: 'mode', value: nextTab.dataset.mode });
       });
       elements.split.addEventListener('input', (event) => onStateChange({ type: 'split', value: event.target.value }));
+      elements.split.addEventListener('keydown', (event) => {
+        if (!['ArrowLeft', 'ArrowDown', 'ArrowRight', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const minimum = Number(event.target.min) || 0;
+        const maximum = Number(event.target.max) || 100;
+        const step = Number(event.target.step) || 1;
+        const current = clampVisualSplit(event.target.value);
+        const value = event.key === 'Home' ? minimum
+          : event.key === 'End' ? maximum
+            : current + (['ArrowRight', 'ArrowUp'].includes(event.key) ? step : -step);
+        onStateChange({ type: 'split', value: clampVisualSplit(value) });
+      });
       for (const container of [elements.hotspots, elements.allocationBar, elements.allocationLegend]) {
         container.addEventListener('click', (event) => {
           const button = event.target.closest('[data-budget-id]');
           if (button && !button.disabled) onStateChange({ type: 'budget', value: button.dataset.budgetId });
+        });
+        container.addEventListener('keydown', (event) => {
+          if (!['Enter', ' ', 'Space'].includes(event.key)) return;
+          const button = event.target.closest('[data-budget-id]');
+          if (!button || button.disabled) return;
+          event.preventDefault();
+          onStateChange({ type: 'budget', value: button.dataset.budgetId });
         });
       }
       const showImageError = () => { elements.imageStatus.textContent = '概念图暂未加载，请刷新页面后重试。'; };
