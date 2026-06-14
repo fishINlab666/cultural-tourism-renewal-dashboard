@@ -168,6 +168,7 @@ test('V2 investment step exposes the three-slider sandbox and KPI donut layout',
 
 test('V2 visual deepening exposes comparison tabs and cost-linked material hotspots', async () => {
   const html = await read('index.html');
+  const css = await read('styles.css');
 
   await Promise.all([
     'courtyard-day-before.png',
@@ -185,4 +186,8 @@ test('V2 visual deepening exposes comparison tabs and cost-linked material hotsp
   assert.match(html, /role="tablist"/);
   assert.match(html, /role="slider"|type="range"/);
   assert.match(html, /AI 概念模拟，非现场实拍/);
+  assert.match(css, /\.visual-comparison\s*\{[^}]*aspect-ratio:\s*16\s*\/\s*9/s);
+  assert.match(css, /\.visual-material-panel\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.55fr\)\s+minmax\(280px,\s*\.45fr\)/s);
+  assert.match(css, /\.visual-hotspot\s*\{[^}]*min-width:\s*44px[^}]*min-height:\s*44px/s);
+  assert.match(css, /@media \(max-width: 760px\)[\s\S]*\.visual-material-panel\s*\{[^}]*grid-template-columns:\s*1fr/);
 });

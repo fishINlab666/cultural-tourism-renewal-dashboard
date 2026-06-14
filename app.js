@@ -16,6 +16,7 @@ import {
   calculateInvestmentSandbox,
   createInvestmentSandboxView,
 } from './investment-sandbox.mjs';
+import { createVisualDeepeningView, reduceVisualState } from './visual-deepening.mjs';
 
 const stepDescriptions = {
   1: '先用统一模板准备项目资料，系统只会要求您处理必要字段。',
@@ -36,6 +37,7 @@ const state = restoredDraft
 const provider = new LocalAnalysisProvider(sampleData);
 const diagnosticView = createDiagnosticView(window);
 const investmentSandboxView = createInvestmentSandboxView(window);
+const visualDeepeningView = createVisualDeepeningView(window);
 let toastTimer;
 
 const $ = (selector) => document.querySelector(selector);
@@ -48,6 +50,27 @@ const escapeHtml = (value) => String(value ?? '')
   .replaceAll('>', '&gt;')
   .replaceAll('"', '&quot;')
   .replaceAll("'", '&#039;');
+
+function getVisualElements() {
+  return {
+    selectedPlanTitle: $('#selectedPlanTitle'),
+    selectedPlanSummary: $('#selectedPlanSummary'),
+    visualCostRange: $('#visualCostRange'),
+    modeButtons: $('#visualModeButtons'),
+    tabs: $$('#visualModeButtons [role="tab"]'),
+    comparisonPanel: $('#visualComparisonPanel'),
+    materialPanel: $('#visualMaterialPanel'),
+    comparison: $('#visualComparison'),
+    split: $('#visualSplit'),
+    beforeImage: $('#visualBeforeImage'),
+    afterImage: $('#visualAfterImage'),
+    imageStatus: $('#visualImageStatus'),
+    hotspots: $('#visualHotspots'),
+    budgetDetail: $('#visualBudgetDetail'),
+    allocationBar: $('#visualAllocationBar'),
+    allocationLegend: $('#visualAllocationLegend'),
+  };
+}
 
 function persistState() {
   try {
@@ -288,11 +311,16 @@ function renderPlans() {
 function renderVisual() {
   const plan = getSelectedPlan(sampleData, state.selectedPlanId);
   if (!plan) return;
-  $('#selectedPlanTitle').textContent = plan.name;
-  $('#selectedPlanSummary').textContent = `${plan.summary} 当前风格方向：${state.project.stylePreference}。`;
-  $('#visualCanvas').dataset.mode = state.visualMode;
-  $$('#visualModeButtons button').forEach((button) => button.classList.toggle('is-active', button.dataset.mode === state.visualMode));
-  $('#materialSwatches').innerHTML = sampleData.materialSwatches.map(([name, color, use]) => `<article class="swatch-card"><span class="swatch" style="background:${color}"></span><span><strong>${escapeHtml(name)}</strong><small>${escapeHtml(use)}</small></span></article>`).join('');
+  visualDeepeningView.render({
+    plan,
+    costRange: calculateCostRange(state.project, sampleData.costs, plan),
+    visualState: {
+      mode: state.visualMode,
+      split: state.visualSplit,
+      selectedBudgetId: state.selectedVisualBudgetId,
+    },
+    elements: getVisualElements(),
+  });
 }
 
 function buildReport() {
@@ -518,12 +546,20 @@ function bindEvents() {
   });
   $('#confirmPlanButton').addEventListener('click', confirmPlan);
 
-  $('#visualModeButtons').addEventListener('click', (event) => {
-    const button = event.target.closest('[data-mode]');
-    if (!button) return;
-    state.visualMode = button.dataset.mode;
-    persistState();
-    renderVisual();
+  visualDeepeningView.bind({
+    elements: getVisualElements(),
+    onStateChange(action) {
+      const nextVisualState = reduceVisualState({
+        mode: state.visualMode,
+        split: state.visualSplit,
+        selectedBudgetId: state.selectedVisualBudgetId,
+      }, action);
+      state.visualMode = nextVisualState.mode;
+      state.visualSplit = nextVisualState.split;
+      state.selectedVisualBudgetId = nextVisualState.selectedBudgetId;
+      persistState();
+      renderVisual();
+    },
   });
 
   $('#resetDraftButton').addEventListener('click', () => {
