@@ -7,6 +7,40 @@ const VISUAL_BUDGET_DEFINITIONS = Object.freeze([
   { id: 'experience', number: 6, label: '可逆展陈与运营启动', sources: [{ category: '内容与运营启动', share: 1 }], color: '#A9473F', anchor: [48, 46] },
 ]);
 
+const VISUAL_IMAGE_SETS = Object.freeze({
+  day: Object.freeze({
+    before: 'assets/visual-deepening/courtyard-day-before.png',
+    after: 'assets/visual-deepening/courtyard-day-after.png',
+  }),
+  night: Object.freeze({
+    before: 'assets/visual-deepening/courtyard-night-before.png',
+    after: 'assets/visual-deepening/courtyard-night-after.png',
+  }),
+});
+
+export function clampVisualSplit(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 50;
+  return Math.min(100, Math.max(0, number));
+}
+
+export function getVisualImageSet(mode) {
+  return VISUAL_IMAGE_SETS[mode] ?? VISUAL_IMAGE_SETS.day;
+}
+
+export function reduceVisualState(state, action) {
+  if (action.type === 'mode' && ['day', 'night', 'material'].includes(action.value)) {
+    return { ...state, mode: action.value };
+  }
+  if (action.type === 'split') {
+    return { ...state, split: clampVisualSplit(action.value) };
+  }
+  if (action.type === 'budget' && typeof action.value === 'string') {
+    return { ...state, selectedBudgetId: action.value };
+  }
+  return { ...state };
+}
+
 function allocateDefinition(definition, rowsByCategory) {
   const sourceRows = definition.sources.map((source) => ({
     ...source,

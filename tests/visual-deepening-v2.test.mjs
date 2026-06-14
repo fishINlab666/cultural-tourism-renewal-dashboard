@@ -3,7 +3,12 @@ import assert from 'node:assert/strict';
 
 import { calculateCostRange } from '../analysis.mjs';
 import { sampleData } from '../data.mjs';
-import { buildVisualBudget } from '../visual-deepening.mjs';
+import {
+  buildVisualBudget,
+  clampVisualSplit,
+  getVisualImageSet,
+  reduceVisualState,
+} from '../visual-deepening.mjs';
 
 test('visual budget maps every existing cost row into six customer-facing hotspots', () => {
   const plan = sampleData.plans.find((item) => item.id === 'growth');
@@ -25,4 +30,26 @@ test('visual budget never invents an amount for a missing cost category', () => 
   assert.equal(survey.status, 'missing');
   assert.equal(survey.low, null);
   assert.equal(survey.high, null);
+});
+
+test('comparison split is clamped to the full image bounds', () => {
+  assert.equal(clampVisualSplit(-8), 0);
+  assert.equal(clampVisualSplit(64), 64);
+  assert.equal(clampVisualSplit(140), 100);
+});
+
+test('day and night modes resolve to matching local asset pairs', () => {
+  assert.deepEqual(getVisualImageSet('night'), {
+    before: 'assets/visual-deepening/courtyard-night-before.png',
+    after: 'assets/visual-deepening/courtyard-night-after.png',
+  });
+});
+
+test('tab changes preserve the split and selected budget item', () => {
+  const state = reduceVisualState(
+    { mode: 'day', split: 63, selectedBudgetId: 'courtyard' },
+    { type: 'mode', value: 'night' },
+  );
+
+  assert.deepEqual(state, { mode: 'night', split: 63, selectedBudgetId: 'courtyard' });
 });

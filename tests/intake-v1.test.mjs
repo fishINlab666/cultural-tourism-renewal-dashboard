@@ -48,6 +48,9 @@ test('draft storage persists normalized state but excludes raw workbook content'
     currentStep: 3,
     project: { name: '测试项目' },
     workbookFileName: '资料.xlsx',
+    visualMode: 'night',
+    visualSplit: 63,
+    selectedVisualBudgetId: 'courtyard',
     rawWorkbook: 'must-not-persist',
   };
 
@@ -55,6 +58,9 @@ test('draft storage persists normalized state but excludes raw workbook content'
   const restored = loadDraft(storage);
   assert.equal(restored.currentStep, 3);
   assert.equal(restored.project.name, '测试项目');
+  assert.equal(restored.visualMode, 'night');
+  assert.equal(restored.visualSplit, 63);
+  assert.equal(restored.selectedVisualBudgetId, 'courtyard');
   assert.equal('rawWorkbook' in restored, false);
 
   clearDraft(storage);
