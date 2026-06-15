@@ -6,7 +6,8 @@ const deckPath = new URL('../ppt/index.html', import.meta.url);
 
 test('product deck implements the approved eight-slide Swiss contract', async () => {
   const html = await readFile(deckPath, 'utf8');
-  const slides = [...html.matchAll(/<section\b[^>]*class="[^"]*\bslide\b[^"]*"[^>]*>/g)];
+  const htmlWithoutComments = html.replace(/<!--[\s\S]*?-->/g, '');
+  const slides = [...htmlWithoutComments.matchAll(/<section\b[^>]*class="[^"]*\bslide\b[^"]*"[^>]*>/g)];
   const layouts = slides.map(({ 0: tag }) => tag.match(/data-layout="([^"]+)"/)?.[1]);
 
   assert.equal(slides.length, 8);
@@ -15,6 +16,8 @@ test('product deck implements the approved eight-slide Swiss contract', async ()
   assert.match(html, /--accent:#C5E803/);
   assert.doesNotMatch(html, /\[必填\]|TBD|TODO/);
   assert.equal((html.match(/class="workflow-rail"/g) ?? []).length, 8);
+  assert.match(html, /\.canvas-card > \.workflow-rail,\s*\.canvas-card > \.image-title-block\{position:absolute\}/);
+  assert.equal((html.match(/class="slide [^"]*product-screenshot/g) ?? []).length, 2);
   assert.match(html, /data-image-slot="s22-hero-21x9"/);
   assert.match(html, /images\/05-cost-investment-21x9\.png/);
   assert.match(html, /images\/07-visual-modes-21x9\.png/);
