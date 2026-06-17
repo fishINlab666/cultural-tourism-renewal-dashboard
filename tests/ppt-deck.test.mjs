@@ -26,4 +26,7 @@ test('product deck implements the approved eight-slide Swiss contract', async ()
   assert.match(html, /data-product-action="plan-selection"/);
   assert.match(html, /data-product-action="visual-switch"/);
   assert.match(html, /guizang-ppt-low-power/);
+  assert.match(html, /addEventListener\('keydown'/);
+  assert.doesNotMatch(html, /addEventListener\('wheel'/);
+  assert.doesNotMatch(html, /addEventListener\('touch(?:start|end)'/);
 });
